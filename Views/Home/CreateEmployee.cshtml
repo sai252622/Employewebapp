@@ -1,0 +1,53 @@
+﻿@model CreateEmployee
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Employee</title>
+</head>
+<body>
+    <h2>Create New Employee</h2>
+    <form asp-controller="Home" asp-action="CreateEmployeeForm">
+       @*  <label  class=" mt-4">Id:</label>
+        <input type="number"   class="form-control" placeholder=" Enter Id"  hidden/>
+           <br/> *@
+        <label for="name" class="mt-4">Name:  </label>
+        <label style="color:red" >*   </label>
+        <input type="text" id="name" asp-for="Name" class="form-control"  placeholder=" Enter Name" />
+        <span asp-validation-for="Name" class="text-danger">  </span>
+        <br/>
+
+        <label for="salary" class=" mt-4">Salary:</label>
+        <input type="number" id="salary" asp-for="Salary" class= "form-control" placeholder=" Enter Salary"  />
+        <span asp-validation-for="Salary" style="color:red"></span>
+        <br />
+        
+
+        <label asp-for="Department" class="col-sm-2" >Select Department:</label>
+       @*  <select asp-for="SelectedDepartment" asp-items="Html.GetEnumSelectList<Department>()"></select> *@
+        <div class="col-sm-10">
+        <select asp-for="Department"  class="custom-select mr-sm-4"
+                    asp-items="Html.GetEnumSelectList<Dept>()">
+            <option value=""> Please Select</option>
+         </select>
+        <span asp-validation-for="Department" style="color:red"></span>
+        </div>
+        <br />
+
+        <label for="Description" class=" mt-4">Email:</label>
+        <input type="text" id="Description" asp-for="Description" class="form-control"  placeholder="Enter Description"/>
+        <span asp-validation-for="Description" style="color:red"></span>
+        <br />
+
+        <label for="phone" class=" mt-4">phone:</label>
+        <input type="number" id="phone" asp-for="Phone" class="form-control"  placeholder="Enter Phone" />
+        <span asp-validation-for="Phone" style="color:red"></span>
+        <br />
+        <button type="submit">Submit</button>
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+    </form>
+</body>
+</html>
