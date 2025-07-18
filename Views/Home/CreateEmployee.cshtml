@@ -10,9 +10,19 @@
 <body>
     <h2>Create New Employee</h2>
     <form asp-controller="Home" asp-action="CreateEmployeeForm">
-       @*  <label  class=" mt-4">Id:</label>
-        <input type="number"   class="form-control" placeholder=" Enter Id"  hidden/>
-           <br/> *@
+        @if (Model.Id == 0)
+        {
+            <br/>
+        }
+        else
+        {
+            <label class=" mt-4">Id:</label>
+            <input type="number" asp-for="Id" class="form-control" value="@Model.Id" readonly />
+            <br />
+        }
+
+      
+           
         <label for="name" class="mt-4">Name:  </label>
         <label style="color:red" >*   </label>
         <input type="text" id="name" asp-for="Name" class="form-control"  placeholder=" Enter Name" />
@@ -46,7 +56,9 @@
         <span asp-validation-for="Phone" style="color:red"></span>
         <br />
         <button type="submit">Submit</button>
+        <a asp-action="Employe" asp-controller="Home" class="btn btn-secondary">Cancel</a>
         <div asp-validation-summary="All" class="text-danger"></div>
+
 
     </form>
 </body>
