@@ -37,15 +37,22 @@ namespace Employewebapp.Controllers
         }
         public IActionResult CreateEmployee(int? id)
         {
-            if (id == null)
-            { return View(); }
-            ///user is trying to create  a new record
-            else
+            if (id == null || id == 0)
             {
-                var empobject = _context.Employees.FirstOrDefault(x => x.Id == id);
-                return View(empobject);
+                // Return empty form for create
+                return View(new CreateEmployee());
             }
+
+            // Load employee for editing
+            var emp = _context.Employees.FirstOrDefault(e => e.Id == id);
+            if (emp == null)
+            {
+                return NotFound();
+            }
+
+            return View(emp);
         }
+    
 
         public IActionResult DeleteEmployee(int? Id)
         {
@@ -56,24 +63,37 @@ namespace Employewebapp.Controllers
         }
 
 
+        [HttpPost]
+        [HttpPost]
         public IActionResult CreateEmployeeForm(CreateEmployee emp)
         {
             if (ModelState.IsValid)
             {
-                var empobject = _context.Employees.AsNoTracking().FirstOrDefault(x => x.Id == emp.Id);
-                if (empobject == null)
+                var existingEmp = _context.Employees.FirstOrDefault(x => x.Id == emp.Id);
+
+                if (existingEmp == null)
                 {
+                    // Add new
                     _context.Employees.Add(emp);
                 }
                 else
                 {
-                    _context.Employees.Update(emp);
+                    // Update existing
+                    existingEmp.Name = emp.Name;
+                    existingEmp.Phone = emp.Phone;
+                    existingEmp.Salary = emp.Salary;
+                    existingEmp.Description = emp.Description;
 
+                    _context.Employees.Update(existingEmp);
                 }
+
                 _context.SaveChanges();
                 return RedirectToAction("Employe");
-            }else return View("CreateEmployee");
+            }
+
+            return View("CreateEmployee", emp);
         }
+
         public IActionResult Employe()
         {
     //        List<Employe> emplist = new List<Employe>

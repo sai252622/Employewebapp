@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Employewebapp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Employewebapp.styles.css" asp-append-version="true" />
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-right: 1px solid #dee2e6;
+        }
+
+            .sidebar .nav-link {
+                color: #000;
+                margin-bottom: 10px;
+            }
+
+                .sidebar .nav-link.active,
+                .sidebar .nav-link:hover {
+                    font-weight: bold;
+                    color: #0d6efd;
+                }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background-color: #fff;
+        }
+
+        .footer {
+            background-color: #f1f1f1;
+            padding: 1rem 0;
+        }
+
+        .navbar .nav-link {
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Employewebapp</a>
+            
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Login" ? "active" : "")"
+                           asp-controller="Account" asp-action="Login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Register" ? "active" : "")"
+                           asp-controller="Account" asp-action="Register">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            
+            <nav class="nav flex-column">
+                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                   asp-controller="Home" asp-action="Index">Home</a>
+                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Privacy" ? "active" : "")"
+                   asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Employe" ? "active" : "")"
+                   asp-controller="Home" asp-action="Employe">Employee List</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+            <footer class="footer text-muted mt-5 border-top text-center">
+                <div class="container">
+                    &copy; 2025 - Employewebapp - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

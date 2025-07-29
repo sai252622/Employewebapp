@@ -10,6 +10,8 @@
 <body>
     <h2>Create New Employee</h2>
     <form asp-controller="Home" asp-action="CreateEmployeeForm">
+        <input type="hidden" asp-for="Id" />
+
        @*  <label  class=" mt-4">Id:</label>
         <input type="number"   class="form-control" placeholder=" Enter Id"  hidden/>
            <br/> *@

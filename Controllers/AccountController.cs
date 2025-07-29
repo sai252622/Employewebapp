@@ -21,13 +21,24 @@ namespace Employeewebapp.Controllers
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
+            if (_context.Users.Any(u => u.Name == model.Name))
+            {
+                ModelState.AddModelError("Name", "This name is already taken.");
+            }
+
+            if (_context.Users.Any(u => u.Email == model.Email))
+            {
+                ModelState.AddModelError("Email", "This email is already registered.");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = new User
                 {
                     Name = model.Name,
                     Email = model.Email,
-                    Password = model.Password
+                    Password = model.Password,
+                    RoleId = model.IsAdmin ? 1:2
                 };
 
                 _context.Users.Add(user);
@@ -57,7 +68,7 @@ namespace Employeewebapp.Controllers
                 if (user != null)
                 {
                     TempData["Message"] = "Login successful!";
-                    return RedirectToAction("welcome");  // Or your employee dashboard
+                    return RedirectToAction("Index", "Home");  // Or your employee dashboard
                 }
                 else
                 {
@@ -72,6 +83,76 @@ namespace Employeewebapp.Controllers
         public IActionResult Welcome()
         {
             return View();
+        }
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
+            if (user == null)
+            {
+                TempData["Error"] = "Email not found.";
+                return View(model);
+            }
+
+            user.ResetToken = Guid.NewGuid().ToString();
+            user.ResetTokenExpiry = DateTime.Now.AddMinutes(15);
+            _context.SaveChanges();
+
+            // Send token via email (simulate here)
+            //var resetLink = Url.Action("ResetPassword", "Account",
+            //    new { email = user.Email, token = user.ResetToken },
+            //    protocol: HttpContext.Request.Scheme);
+            var resetLink = user.ResetToken;
+
+            // For now, just show on screen
+            TempData["Message"] = $"Reset link: {resetLink}";
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == email );
+            if (user == null)
+            {
+                TempData["Error"] = "Invalid or expired token.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            return View(new ResetPasswordViewModel { Email = email, Token = token });
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = _context.Users.FirstOrDefault(u =>
+                u.Email == model.Email &&
+                u.ResetToken == model.Token &&
+                u.ResetTokenExpiry > DateTime.Now);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Invalid or expired token.";
+                return View(model);
+            }
+
+            user.Password = model.NewPassword; // Hash in real apps!
+            user.ResetToken = null;
+            user.ResetTokenExpiry = null;
+            _context.SaveChanges();
+
+            TempData["Message"] = "Password reset successful. Please login.";
+            return RedirectToAction("Login");
         }
 
 

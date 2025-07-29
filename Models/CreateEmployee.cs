@@ -17,5 +17,7 @@ namespace Employewebapp.Models
         public string Phone { get; set; }
         [Range(1000 , 10000)]
         public int Salary { get; set; }
+
+        
     }
 }

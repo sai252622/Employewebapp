@@ -14,5 +14,10 @@ namespace Employewebapp.Models
 
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
+        public string? ResetToken { get; set; }
+
+        public DateTime? ResetTokenExpiry { get; set; }
+
+        public int RoleId { get; set; }
     }
 }

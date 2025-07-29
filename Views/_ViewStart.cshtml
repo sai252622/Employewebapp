@@ -1,3 +1,15 @@
 ﻿@{
-    Layout = "_Layout";
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    // Use top nav layout for Login & Register
+    if (controller == "Account" && (action == "Login" || action == "Register"))
+    {
+        Layout = "~/Views/Shared/_TopNavLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_SidebarLayout.cshtml";
+    }
 }
+
