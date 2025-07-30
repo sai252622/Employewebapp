@@ -1,5 +1,8 @@
 ﻿using Employewebapp.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Employeewebapp.Controllers
 {
@@ -57,24 +60,31 @@ namespace Employeewebapp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Check if the user exists in the DB
                 var user = _context.Users
                     .FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
 
                 if (user != null)
                 {
-                    TempData["Message"] = "Login successful!";
-                    return RedirectToAction("Index", "Home");  // Or your employee dashboard
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.RoleId == 1 ? "Admin" : "User")
+            };
+
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                    return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    TempData["Error"] = "Invalid email or password. Please try again.";
-                    return View(model);
-                }
+
+                TempData["Error"] = "Invalid email or password.";
             }
 
             return View(model);
@@ -120,7 +130,7 @@ namespace Employeewebapp.Controllers
         [HttpGet]
         public IActionResult ResetPassword(string email, string token)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email );
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.ResetToken == token && u.ResetTokenExpiry > DateTime.Now);
             if (user == null)
             {
                 TempData["Error"] = "Invalid or expired token.";
@@ -154,6 +164,15 @@ namespace Employeewebapp.Controllers
             TempData["Message"] = "Password reset successful. Please login.";
             return RedirectToAction("Login");
         }
+      
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(); // If using cookie auth
+            return RedirectToAction("Login", "Account");
+        }
+
 
 
     }

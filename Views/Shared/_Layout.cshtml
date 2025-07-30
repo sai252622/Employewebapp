@@ -16,17 +16,35 @@
 <body data-theme="light">
     <!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg">
+        <p style="color: yellow;">IsAuthenticated: @User.Identity.IsAuthenticated</p>
+
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Employewebapp</a>
             <div class="d-flex align-items-center ms-auto">
                 <ul class="navbar-nav me-3">
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Login" ? "active" : "")" asp-controller="Account" asp-action="Login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Register" ? "active" : "")" asp-controller="Account" asp-action="Register">Register</a>
-                    </li>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text me-2">Welcome, @User.Identity.Name!</span>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
                 </ul>
+
+
                 <!-- Theme Toggle Button -->
                 <button id="toggleTheme" class="theme-toggle" title="Toggle theme">
                     <i class="bi bi-brightness-high-fill"></i>
