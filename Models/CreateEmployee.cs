@@ -14,8 +14,10 @@ namespace Employewebapp.Models
         [Required(ErrorMessage = "please select the department.")]
         public Dept? Department  { get; set; }    
     
-        public int Phone { get; set; }
+        public string Phone { get; set; }
         [Range(1000 , 10000)]
         public int Salary { get; set; }
+
+        
     }
 }
