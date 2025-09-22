@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<CreateEmployee>
+@using X.PagedList
+@using X.PagedList.Mvc.Core;
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +27,67 @@
 </head>
 <body>
     <h2>Employe</h2>
+<p> @Model.Count() Employees Exist</p>
+<div>
+        
+        @Html.PagedListPager(
+        (IPagedList)Model,
+        page => Url.Action("Employe", new  {page = page }),
+                 new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            DisplayLinkToIndividualPages = true,
+            MaximumPageNumbersToDisplay = 5,
+            DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+
+            UlElementClasses = new[] { "pagination", "justify-content-center" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" },
+            // ✅ Active & Disabled states
+            ActiveLiElementClass = "active",
+            //DisabledLiElementClass = "disabled",
+            // ✅ Nice symbols for prev/next
+            LinkToPreviousPageFormat = "«",
+            LinkToNextPageFormat = "»",
+            LinkToFirstPageFormat = "First",
+            LinkToLastPageFormat = "Last",
+            //LinkToPreviousPageFormat = "«",
+           // LinkToNextPageFormat = "»",
+           // LinkToFirstPageFormat = "First",
+           // LinkToLastPageFormat = "Last",
+            ClassToApplyToFirstListItemInPager = "page-item",
+            ClassToApplyToLastListItemInPager = "page-item"
+        }
+                 )
+
+</div>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="row">
+    <div class="col-md-6">
+    <form asp-action="search" class="d-flex" asp-controller="Home" method="post">
+
+               <input name="query" type="text" id="Description" class="form-control me-1" placeholder="Search" />
+        <button class="btn btn-dark" type="submit">
+            Search by name
+        </button>
+        </form>
+        </div>
+    <div class="col-md-6">
+        <a asp-action="Employe" asp-controller="Home">Back to list</a>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
     <table>
         <thead>
             <tr>
@@ -32,6 +96,7 @@
                 <th>Phone </th>
                 <th>Salary</th>
                 <th>Description</th>
+                <th>Department</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -46,6 +111,7 @@
         <td>@emp.Phone</td>
         <td>@emp.Salary</td>
         <td>@emp.Description</td>
+        <td>@emp.Department</td>
         <td>
                         <a asp-action="CreateEmployee" asp-route-id="@emp.Id">Edit</a>
                         <a asp-action="DeleteEmployee" asp-route-id="@emp.Id">Delete</a>
